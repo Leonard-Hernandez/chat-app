@@ -5,8 +5,7 @@ import SockJS from 'sockjs-client';
 @Component({
   selector: 'app-chat',
   imports: [],
-  templateUrl: './chat.component.html',
-  styleUrl: './chat.component.css'
+  templateUrl: './chat.component.html'
 })
 export class ChatComponent implements OnInit{
 
