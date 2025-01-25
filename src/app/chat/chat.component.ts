@@ -10,6 +10,8 @@ import SockJS from 'sockjs-client';
 export class ChatComponent implements OnInit{
 
   private client!: Client;
+  
+  connectado: boolean = false;
 
   constructor() {}
 
@@ -23,8 +25,23 @@ export class ChatComponent implements OnInit{
     this.client.onConnect = (frame) => {
       console.log("status " + this.client.connected)
       console.log("Connected: " + frame);
+      this.connectado = true;
     }
+
+    this.client.onDisconnect = (frame) => {
+      console.log("status " + this.client.connected)
+      console.log("Disconnected: " + frame);
+      this.connectado = false;
+    }
+  }
+
+  connect():void{
     this.client.activate();
+  }
+
+  disconnect():void{
+    this.client.deactivate();
+
   }
 
 
