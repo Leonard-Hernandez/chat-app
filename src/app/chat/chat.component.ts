@@ -3,10 +3,12 @@ import { FormsModule} from '@angular/forms';
 import { Client, IStompSocket} from '@stomp/stompjs' 
 import SockJS from 'sockjs-client';
 import { Message } from './models/message';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-chat',
-  imports: [FormsModule],
+  standalone: true,
+  imports: [FormsModule, CommonModule],
   templateUrl: './chat.component.html'
 })
 export class ChatComponent implements OnInit{
@@ -32,11 +34,12 @@ export class ChatComponent implements OnInit{
       console.log("Connected: " + frame);
       this.connected = true;
 
-      this.client.subscribe('/chat/mensajes', e => {
-        let message = JSON.parse(e.body) as Message;
+      this.client.subscribe('/chat/mensaje', e => {
+        let message: Message = JSON.parse(e.body) as Message;
+        message.fecha = new Date(message.fecha);
         this.messages.push(message);
         console.log(message);
-      })
+      });
     }
 
     this.client.onDisconnect = (frame) => {
@@ -59,6 +62,7 @@ export class ChatComponent implements OnInit{
       destination: '/app/mensaje',
       body: JSON.stringify(this.message)
     });
+    console.log(this.message);
     this.message.text = '';
   }
 
