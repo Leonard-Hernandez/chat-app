@@ -1,7 +1,7 @@
 <div class="card mx-4 my-4">
     <div class="card-header">
         <ul class="nav nav-pills card-header-pills">
-            @if (!connectado) {
+            @if (!connected) {
                 <li class="nav-item mx-2">
                     <button class="btn btn-success" type="button" (click)="connect()">Conectar</button>
                 </li>
@@ -12,15 +12,23 @@
             }
         </ul>
     </div>
-    @if (connectado) {
-        <div class="card-body" style="overflow: scroll; height: 360px;"></div>
+    @if (connected) {
+        <div class="card-body" style="overflow: scroll; height: 360px;">
+            <ul class="list-group">
+                @for (message of messages; track $index) {
+                    <li class="list-group-item list-group-item-light">
+                        {{message.text}}
+                    </li>
+                }
+            </ul>
+        </div>
     
         <div class="card-footer">
             <form class="form-inline">
                 <div class="form-group mx-3">
-                    <input type="text" class="form-control" placeholder="Escribe tu mensaje" name="texto">
+                    <input type="text" class="form-control" [(ngModel)]="message.text" placeholder="Escribe tu mensaje" name="text">
                 </div>
-                <button class="btn btn-primary" type="submit">Enviar</button>
+                <button class="btn btn-primary" type="submit" (click)="sendMessage()">Enviar</button>
             </form>
         </div>
     }

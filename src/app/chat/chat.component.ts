@@ -1,17 +1,22 @@
 import { Component, OnInit } from '@angular/core';
-import { Client, IStompSocket } from '@stomp/stompjs' 
+import { FormsModule} from '@angular/forms';
+import { Client, IStompSocket} from '@stomp/stompjs' 
 import SockJS from 'sockjs-client';
+import { Message } from './models/message';
 
 @Component({
   selector: 'app-chat',
-  imports: [],
+  imports: [FormsModule],
   templateUrl: './chat.component.html'
 })
 export class ChatComponent implements OnInit{
 
   private client!: Client;
+
+  message: Message = new Message();
+  messages: Message[] = [];
   
-  connectado: boolean = false;
+  connected: boolean = false;
 
   constructor() {}
 
@@ -25,13 +30,19 @@ export class ChatComponent implements OnInit{
     this.client.onConnect = (frame) => {
       console.log("status " + this.client.connected)
       console.log("Connected: " + frame);
-      this.connectado = true;
+      this.connected = true;
+
+      this.client.subscribe('/chat/mensajes', e => {
+        let message = JSON.parse(e.body) as Message;
+        this.messages.push(message);
+        console.log(message);
+      })
     }
 
     this.client.onDisconnect = (frame) => {
       console.log("status " + this.client.connected)
       console.log("Disconnected: " + frame);
-      this.connectado = false;
+      this.connected = false;
     }
   }
 
@@ -41,7 +52,14 @@ export class ChatComponent implements OnInit{
 
   disconnect():void{
     this.client.deactivate();
+  }
 
+  sendMessage():void{
+    this.client.publish({
+      destination: '/app/mensaje',
+      body: JSON.stringify(this.message)
+    });
+    this.message.text = '';
   }
 
 
