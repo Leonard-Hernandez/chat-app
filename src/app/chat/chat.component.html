@@ -2,34 +2,52 @@
     <div class="card-header">
         <ul class="nav nav-pills card-header-pills">
             @if (!connected) {
-                <li class="nav-item mx-2">
-                    <button class="btn btn-success" type="button" (click)="connect()">Conectar</button>
-                </li>
+            <li class="nav-item mx-2">
+                <button class="btn btn-success" type="button" (click)="connect()" [disabled]="!message.username">
+                    Conectar
+                </button>
+            </li>
+            <li class="nav-item">
+                <input type="text" class="form-control" [(ngModel)]="message.username" placeholder="username"
+                    name="username" />
+            </li>
             }@else {
-                <li class="nav-item">
-                    <button class="btn btn-warning" type="button" (click)="disconnect()">Cerrar Chat</button>
-                </li>
+            <li class="nav-item">
+                <button class="btn btn-warning" type="button" (click)="disconnect()">
+                    Cerrar Chat
+                </button>
+            </li>
             }
         </ul>
     </div>
     @if (connected) {
-        <div class="card-body" style="overflow: scroll; height: 360px;">
-            <ul class="list-group list-group-flush">
-                @for (message of messages; track $index) {
-                    <li class="list-group-item list-group-item-light">
-                        {{message.fecha | date:'shortTime'}} : {{message.text}} 
-                    </li>
+    <div class="card-body" style="overflow: scroll; height: 360px">
+        <ul class="list-group list-group-flush">
+            @for (message of messages; track $index) {
+            <li class="list-group-item list-group-item-light">
+                @if (message.type == 'NEW_USER') {
+                {{ message.fecha | date : "shortTime" }} : {{ message.text }}
+                <span [ngStyle]="{ color: message.color }">{{ message.username }}</span>
+                } @if (message.type == 'MESSAGE') {
+                {{ message.fecha | date : "shortTime" }}
+                <span [ngStyle]="{ color: message.color }">{{ message.username }}</span>
+                dice: <br />{{ message.text }}
                 }
-            </ul>
-        </div>
-    
-        <div class="card-footer">
-            <form class="form-inline">
-                <div class="form-group mx-3">
-                    <input type="text" class="form-control" [(ngModel)]="message.text" placeholder="Escribe tu mensaje" name="text">
-                </div>
-                <button class="btn btn-primary" type="submit" (click)="sendMessage()">Enviar</button>
-            </form>
-        </div>
+            </li>
+            }
+        </ul>
+    </div>
+
+    <div class="card-footer">
+        <form class="form-inline">
+            <div class="form-group mx-3">
+                <input type="text" class="form-control" [(ngModel)]="message.text" placeholder="Escribe tu mensaje"
+                    name="text" />
+            </div>
+            <button class="btn btn-primary" type="submit" (click)="sendMessage()">
+                Enviar
+            </button>
+        </form>
+    </div>
     }
 </div>

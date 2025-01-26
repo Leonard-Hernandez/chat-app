@@ -37,9 +37,22 @@ export class ChatComponent implements OnInit{
       this.client.subscribe('/chat/mensaje', e => {
         let message: Message = JSON.parse(e.body) as Message;
         message.fecha = new Date(message.fecha);
+
+        if(!this.message.color && message.type == 'NEW_USER' && this.message.username == message.username){
+          this.message.color = message.color
+        }
+
         this.messages.push(message);
         console.log(message);
       });
+
+      this.message.type = 'NEW_USER';
+
+      this.client.publish({
+        destination: '/app/mensaje',
+        body: JSON.stringify(this.message)
+      });
+      
     }
 
     this.client.onDisconnect = (frame) => {
@@ -58,6 +71,7 @@ export class ChatComponent implements OnInit{
   }
 
   sendMessage():void{
+    this.message.type = 'MESSAGE';
     this.client.publish({
       destination: '/app/mensaje',
       body: JSON.stringify(this.message)
