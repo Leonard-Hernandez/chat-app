@@ -21,7 +21,7 @@
         </ul>
     </div>
     @if (connected) {
-    <div class="card-body" style="overflow: scroll; height: 360px">
+    <div #scrollChat [scrollTop]="scrollChat.scrollHeight" class="card-body" style="overflow: scroll; height: 360px">
         <ul class="list-group list-group-flush">
             @for (message of messages; track $index) {
             <li class="list-group-item list-group-item-light">
@@ -42,12 +42,15 @@
         <form class="form-inline">
             <div class="form-group mx-3">
                 <input type="text" class="form-control" [(ngModel)]="message.text" placeholder="Escribe tu mensaje"
-                    name="text" />
+                    name="text" 
+                    (keyup)="typingEvent()"    
+                />
             </div>
             <button class="btn btn-primary" type="submit" (click)="sendMessage()">
                 Enviar
             </button>
         </form>
+        <div>{{ escribiendo }}</div>
     </div>
     }
 </div>

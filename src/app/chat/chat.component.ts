@@ -18,6 +18,8 @@ export class ChatComponent implements OnInit{
   message: Message = new Message();
   messages: Message[] = [];
   
+  escribiendo: string = '';
+
   connected: boolean = false;
 
   constructor() {}
@@ -46,6 +48,11 @@ export class ChatComponent implements OnInit{
         console.log(message);
       });
 
+      this.client.subscribe('/chat/escribiendo', e => {
+        this.escribiendo = e.body;
+        setTimeout(() =>this.escribiendo = '', 3000)
+      });
+
       this.message.type = 'NEW_USER';
 
       this.client.publish({
@@ -60,6 +67,7 @@ export class ChatComponent implements OnInit{
       console.log("Disconnected: " + frame);
       this.connected = false;
     }
+
   }
 
   connect():void{
@@ -80,5 +88,11 @@ export class ChatComponent implements OnInit{
     this.message.text = '';
   }
 
+  typingEvent(): void{
+    this.client.publish({
+      destination: '/app/escribiendo',
+      body: this.message.username
+    });
+  }
 
 }
