@@ -50,7 +50,7 @@ export class ChatComponent implements OnInit{
 
       this.client.subscribe('/chat/escribiendo', e => {
         this.escribiendo = e.body;
-        setTimeout(() =>this.escribiendo = '', 3000)
+        setTimeout(() =>this.escribiendo = '', 4000)
       });
 
       this.message.type = 'NEW_USER';
