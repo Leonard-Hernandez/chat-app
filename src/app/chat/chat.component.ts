@@ -14,15 +14,16 @@ import { CommonModule } from '@angular/common';
 export class ChatComponent implements OnInit{
 
   private client!: Client;
-
   message: Message = new Message();
-  messages: Message[] = [];
-  
+  messages: Message[] = [];  
   escribiendo: string = '';
-
   connected: boolean = false;
+  clienteId: string = '';
 
-  constructor() {}
+  constructor() {
+
+    this.clienteId = 'id-' + new Date().getUTCMilliseconds + '-' + Math.random().toString(36).substring(2);
+  }
 
   ngOnInit(): void {
     this.client = new Client();
@@ -52,6 +53,19 @@ export class ChatComponent implements OnInit{
         this.escribiendo = e.body;
         setTimeout(() =>this.escribiendo = '', 4000)
       });
+      
+      this.client.subscribe('/chat/historial/'+this.clienteId, e => {
+        const historial = JSON.parse(e.body) as Message[];
+        this.messages = historial.map(m => {
+          m.fecha = new Date(m.fecha);
+          return m;
+        }).reverse();
+      });
+
+      this.client.publish({
+        destination: '/app/historial',
+        body: this.clienteId
+      })
 
       this.message.type = 'NEW_USER';
 
@@ -66,6 +80,9 @@ export class ChatComponent implements OnInit{
       console.log("status " + this.client.connected)
       console.log("Disconnected: " + frame);
       this.connected = false;
+      this.message = new Message();
+      this.messages = [];
+
     }
 
   }
